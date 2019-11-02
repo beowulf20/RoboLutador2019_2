@@ -49,7 +49,8 @@ typedef enum
 {
     PSB_MODE_DIGITAL = 0x41,
     PSB_MODE_ANALOG = 0x73,
-    PSB_MODE_CONFIG = 0xF
+    PSB_MODE_CONFIG = 0xF,
+    PSB_MODE_MAX
 } PSB_MODE;
 
 unsigned long IRAM_ATTR micros()
@@ -274,6 +275,20 @@ uint8_t ps2lib_getAnalog(uint8_t idx)
         ESP_LOGE(__func__, "invalid analog index");
         return 0;
     }
+}
+
+float ps2lib_getAnalogf(uint8_t idx)
+{
+    float a = ps2lib_getAnalog(idx) - 127;
+    if (a > 0)
+    {
+        a /= 128.0;
+    }
+    else if (a < 0)
+    {
+        a /= 127.0;
+    }
+    return a;
 }
 
 PSB_MODE ps2lib_getMode()
