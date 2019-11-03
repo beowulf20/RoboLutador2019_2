@@ -159,24 +159,6 @@ void ps2lib_init(uint8_t dataPin, uint8_t cmdPin, uint8_t clkPin, uint8_t attPin
     ///////////////////
 }
 
-// uint32_t ps2lib_read()
-// {
-//     gpio_set_level((gpio_num_t)_attPin, 0);
-
-//     ps2lib_shift(0x01);
-//     ps2lib_shift(0x42);
-//     ps2lib_shift(0xFF);
-
-//     _data1 = ~ps2lib_shift(0xFF);
-//     _data2 = ~ps2lib_shift(0xFF);
-
-//     gpio_set_level((gpio_num_t)_attPin, 1);
-
-//     _lastButtons = _dataOut;
-//     _dataOut = (_data2 << 8) | _data1;
-
-//     return _dataOut;
-// }
 void ps2lib_config_for_analog()
 {
     gpio_set_level((gpio_num_t)_attPin, 0);

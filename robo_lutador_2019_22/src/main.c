@@ -40,6 +40,7 @@ void handle_controls_task()
         {
             turnValue = ps2lib_getAnalogf(0);
             speedValue = ps2lib_getAnalogf(3);
+            // ESP_LOGI(__func__, "speed = %.2f | turn = %.2f", speedValue * 100, turnValue * 100);
         }
         else if (mode == PSB_MODE_DIGITAL)
         {
@@ -48,17 +49,33 @@ void handle_controls_task()
             isLeft = ps2lib_button(PSB_STATE_PAD_LEFT);
             isRight = ps2lib_button(PSB_STATE_PAD_RIGHT);
             if (isUp)
+            {
                 speedValue = 1;
-            else if (isDown)
-                speedValue = -1;
-            else
-                speedValue = 0;
-            if (isLeft)
-                turnValue = 1;
-            else if (isRight)
-                turnValue = -1;
-            else
                 turnValue = 0;
+            }
+
+            else if (isDown)
+            {
+                speedValue = -1;
+                turnValue = 0;
+            }
+
+            else if (isLeft)
+            {
+                speedValue = 0;
+                turnValue = 1;
+            }
+
+            else if (isRight)
+            {
+                speedValue = 0;
+                turnValue = -1;
+            }
+            else
+            {
+                turnValue = 0;
+                speedValue = 0;
+            }
         }
         motor_go(speedValue, turnValue);
         vTaskDelay(50 / portTICK_PERIOD_MS);
@@ -70,6 +87,6 @@ void app_main()
     ps2lib_init(PIN_DAT, PIN_CMD, PIN_CLK, PIN_ATT, PIN_ACK, 30);
     ps2lib_config_for_analog();
     motor_init();
-    xTaskCreatePinnedToCore(control_update_task, "ctrl update", 8196, NULL, 2, NULL, 1);
     xTaskCreatePinnedToCore(handle_controls_task, "handle ctrl", 8196, NULL, 2, NULL, 1);
+    xTaskCreatePinnedToCore(control_update_task, "ctrl update", 8196, NULL, 2, NULL, 1);
 }
