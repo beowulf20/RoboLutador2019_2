@@ -1,57 +1,4 @@
-#pragma once
-
-#include "inttypes.h"
-#include "driver/gpio.h"
-#include "esp_timer.h"
-#include "esp_clk.h"
-#include "time.h"
-#include "freertos/FreeRTOS.h"
-#include "esp_avrc_api.h"
-
-//DEFINITIONS
-#define NOP() asm volatile("nop")
-
-typedef enum
-{
-    //BUTTONS
-    PSB_STATE_IDLE = 0x000,
-    PSB_STATE_SELECT = 0x0001,
-    PSB_STATE_START = 0x0008,
-    PSB_STATE_L2 = 0x0100,
-    PSB_STATE_R2 = 0x0200,
-    PSB_STATE_L1 = 0x0400,
-    PSB_STATE_R1 = 0x0800,
-    PSB_STATE_GREEN = 0x1000,
-    PSB_STATE_RED = 0x2000,
-    PSB_STATE_BLUE = 0x4000,
-    PSB_STATE_PINK = 0x8000,
-    //LEFT KEY PADS/STICKS
-    PSB_STATE_PAD_UP = 0x0010,
-    PSB_STATE_PAD_RIGHT = 0x0020,
-    PSB_STATE_PAD_DOWN = 0x0040,
-    PSB_STATE_PAD_LEFT = 0x0080,
-    PSB_STATE_LEFT_STICK_LEFT = 0x0010,
-    PSB_STATE_LEFT_STICK_DOWN = 0x0020,
-    PSB_STATE_LEFT_STICK_RIGHT = 0x0040,
-    PSB_STATE_LEFT_STICK_UP = 0x0080,
-    //RIGHT KEY PADS/STICKS
-    PSB_STATE_TRIANGLE = 0x1000,
-    PSB_STATE_CIRCLE = 0x2000,
-    PSB_STATE_CROSS = 0x4000,
-    PSB_STATE_SQUARE = 0x8000,
-    PSB_STATE_RIGHT_STICK_LEFT = 0x1000,
-    PSB_STATE_RIGHT_STICK_DOWN = 0x2000,
-    PSB_STATE_RIGHT_STICK_RIGHT = 0x4000,
-    PSB_STATE_RIGHT_STICK_UP = 0x8000
-} PSB_STATE;
-
-typedef enum
-{
-    PSB_MODE_DIGITAL = 0x41,
-    PSB_MODE_ANALOG = 0x73,
-    PSB_MODE_CONFIG = 0xF,
-    PSB_MODE_MAX
-} PSB_MODE;
+#include "ps2lib.h"
 
 unsigned long IRAM_ATTR micros()
 {
@@ -85,19 +32,6 @@ uint32_t _dataOut;
 uint32_t _lastButtons;
 esp_timer_handle_t ps2lib_timer_handle;
 PSB_MODE ps2lib_controller_mode = PSB_MODE_DIGITAL;
-
-// esp_timer_create_args_t _timer_args = {
-//     .callback = ps2lib_timer_cb,
-//     .arg = NULL,
-//     .dispatch_method = ESP_TIMER_TASK,
-//     .name = "PS2LIB"};
-//================================//
-
-//========== TIMER ===========//
-void ps2lib_timer_cb(void *arg)
-{
-}
-//============================//
 
 uint8_t ps2lib_shift(uint8_t dataOut)
 {
@@ -143,9 +77,7 @@ void ps2lib_init(uint8_t dataPin, uint8_t cmdPin, uint8_t clkPin, uint8_t attPin
     gpio_set_direction((gpio_num_t)clkPin, GPIO_MODE_OUTPUT);
     gpio_set_level((gpio_num_t)clkPin, 1);
     // ATTENTION/CS
-    gpio_set_direction((gpio_num_t)attPin, GPIO_MODE_OUTPUT);
-    // gpio_set_pull_mode((gpio_num_t)attPin, GPIO_PULLUP_ONLY);
-    // gpio_pullup_en((gpio_num_t)attPin);
+    gpio_set_direction((gpio_num_t)attPin, GPIO_MODE_OUTPUT);    
     gpio_set_level((gpio_num_t)attPin, 1);
     // ACKNOWLEDGE
     gpio_set_direction((gpio_num_t)ackPin, GPIO_MODE_OUTPUT);

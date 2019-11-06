@@ -191,8 +191,7 @@ motor_dir_t motor_get_direction(float leftJoyStick, float RightJoyStick)
 
 void motor_go(float leftJoyStick, float RightJoyStick)
 {
-    motor_dir_t dir = motor_get_direction(leftJoyStick, RightJoyStick);
-    // ESP_LOGI(__func__, "%.2f %.2f", dir.left * 100, dir.right * 100);
+    motor_dir_t dir = motor_get_direction(leftJoyStick, RightJoyStick);    
     motor_set_dir(0, dir.left);
     motor_set_dir(1, dir.right);
 }
